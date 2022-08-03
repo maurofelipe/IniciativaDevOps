@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app-conversao-temp
+  name: app-conversao-temp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-conversao-temp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app-conversao-temp
+    spec:
+      containers:
+      - image: maurofelipe/app-conversao-temp
+        name: app-conversao-temp
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}

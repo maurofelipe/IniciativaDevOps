@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: db-postgres
+  name: db-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-postgres
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: db-postgres
+    spec:
+      containers:
+        - image: postgres:14.3
+          name: db-postgres
+          ports:
+          - containerPort: 5432
+          env:
+          - name: POSTGRES_PASSWORD
+            value: "senha#9"
+          - name: POSTGRES_USER
+            value: "kubenews"
+          - name: POSTGRES_DB
+            value: "kubenews"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: db-postgres 
+  name: service-postgres
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: db-postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app-kubenews
+  name: app-kubenews
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-kubenews
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: app-kubenews
+    spec:
+      containers:
+      - image: maurofelipe/app-kube-news:latest
+        name: app-kubenews
+        ports:
+        - containerPort: 8080
+        resources: {}
+        env:
+          - name: DB_DATABASE
+            value: "kubenews"
+          - name: DB_USERNAME
+            value: "kubenews"
+          - name: DB_PASSWORD
+            value: "senha#9"
+          - name: DB_HOST
+            value: "service-postgres"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app-kubenews
+  name: service-app-kubenews
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: app-kubenews
+  type: LoadBalancer

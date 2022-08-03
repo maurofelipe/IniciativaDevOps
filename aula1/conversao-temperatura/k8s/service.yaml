@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app-conversao-temp
+  name: svc-app-conversao-temp
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    nodePort: 30000
+    targetPort: 8080
+  selector:
+    app: app-conversao-temp
+  type: NodePort
